@@ -1,0 +1,65 @@
+# Upload this file to the repository ROOT, beside README.md.
+# Existing Xcode project: ImBoon-AdHoc/ImBoon.xcodeproj
+# Run ios-check first. It checks compilation and cannot be installed on iPhone.
+# Before ios-adhoc: add an Apple Distribution certificate and an Ad Hoc
+# provisioning profile for com.tanat.imboon to Codemagic Code signing identities.
+# The profile must contain the UDIDs of the iPhones that will install the app.
+workflows:
+  ios-check:
+    name: ImBoon - Check build
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: Validate project package
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR/ImBoon-AdHoc"
+          python3 tests/validate_package.py
+      - name: Compile for iPhone without signing
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR/ImBoon-AdHoc"
+          mkdir -p build
+          xcodebuild \
+            -project ImBoon.xcodeproj \
+            -scheme ImBoon \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee build/compile.log
+    artifacts:
+      - ImBoon-AdHoc/build/compile.log
+
+  ios-adhoc:
+    name: ImBoon - Ad Hoc IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      xcode: latest
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.tanat.imboon
+    scripts:
+      - name: Validate project package
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR/ImBoon-AdHoc"
+          python3 tests/validate_package.py
+      - name: Apply Ad Hoc signing profile
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR/ImBoon-AdHoc"
+          xcode-project use-profiles
+      - name: Build signed IPA
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR/ImBoon-AdHoc"
+          xcode-project build-ipa \
+            --project ImBoon.xcodeproj \
+            --scheme ImBoon
+    artifacts:
+      - ImBoon-AdHoc/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
