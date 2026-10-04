@@ -1,0 +1,3 @@
+Source-only checks passed: OpenStep Xcode project parsed; project object references resolve; scheme XML and plist files parsed; app icon catalog and PNG sizes checked; offline asset paths are relative; all 48 prayers include practice instructions; JavaScript syntax passed; export shell syntax passed; installer generator rejects unsigned/development packages in mocked tests. No Xcode compile, simulator run, device test, code signing or live OTA install has been performed.
+
+Run `python3 tests/validate_package.py` for portable package validation. Signing and archive verification require Mac/Xcode.

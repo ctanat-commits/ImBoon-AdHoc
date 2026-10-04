@@ -1,0 +1,11 @@
+{
+  "sourceSite": "https://tanat-prayer-book.c-tanat.chatgpt.site",
+  "sourceCommit": "c76211d81b0d3273b5b8cf83913f967bd072227a",
+  "prayerCount": 48,
+  "distribution": "Ad Hoc; unsigned source project, not an IPA",
+  "webAssets": {
+    "icon.svg": "d1e5d678380027596674b9349473602ee2b5b1155548aef4170ef1c63ae916b9",
+    "prayers.js": "4b8ae5113ffa1f6a40542f92ace7f1db9e255a73915b0e7606984edc32c630fe",
+    "index.html": "433207cc0209a1f46f67b72ffee3d5fe0801a824004ca4d991ddf501e3745aed"
+  }
+}
